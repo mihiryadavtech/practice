@@ -13,11 +13,11 @@ const Port = (process.env.PORT as string) || 3000;
 
 //class Error handler
 class AppError extends Error {
-  status: number | undefined;
-
-  constructor(message?: string, status?: number) {
+  statusCode: number | undefined;
+  message: string;
+  constructor(message?: string, statusCode?: number) {
     super(message);
-    this.status = status;
+    this.statusCode = statusCode;
   }
 }
 
@@ -33,19 +33,21 @@ const main = async () => {
     // Routes
     app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
       console.log('hii there 1 next');
-      return next(new Error('hiii there'));
+      return next(new AppError('hiii there', 401));
     });
 
     app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
-      return res.json('hii there 2 next');
+      return res.status(500).json('hii there 2 next');
     });
 
     // Error
-    app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-      console.log('>>>>>>>', error);
-      console.log('+++++', error.stack);
-      res.status(500).send(error.message);
-    });
+    app.use(
+      (error: AppError, req: Request, res: Response, next: NextFunction) => {
+        const status = error.statusCode || 400;
+        const message = error.message || 'Error has occurred';
+        return res.status(status).json(error.message);
+      }
+    );
 
     app.listen(Port, () => {
       console.log(`Listening on ${Port}`);
