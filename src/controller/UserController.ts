@@ -6,16 +6,19 @@
 // import { JsonWebTokenError } from 'jsonwebtoken';
 // const saltRounds = 12;
 
-// const errorFunction = (error: any) => {
-//   const errors = {
-//     code: 400,
-//     error: {
-//       message: error.message,
-//     },
-//     message: 'Error has Occurred',
-//   };
-//   return errors;
-// };
+import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../utils/error';
+
+const errorFunction = (error: any) => {
+  const errors = {
+    code: 400,
+    error: {
+      message: error.message,
+    },
+    message: 'Error has Occurred',
+  };
+  return errors;
+};
 // const messageFunction = (_message: string, _token?: string) => {
 //   const message = {
 //     message: _message,
@@ -26,6 +29,16 @@
 
 // const userRepository = AppDataSource.getRepository(User);
 
+const user = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const hii = 'i am there for you';
+    console.log(hii);
+    return next(new AppError('It is a test error', 500));
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json(error.message);
+  }
+};
 // const registerUser = async (req: Request, res: Response) => {
 //   try {
 //     const images = req?.files as Record<string, Express.Multer.File[]>;
@@ -189,5 +202,4 @@
 //     // return res.status(400).json({ errors });
 //   }
 // };
-
-
+export { user };

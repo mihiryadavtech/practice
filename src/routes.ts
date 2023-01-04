@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { user } from './controller/UserController';
 const router = Router();
-router.get('/');
+
+router.get('/user',user);
 
 export { router as userRouter };
 

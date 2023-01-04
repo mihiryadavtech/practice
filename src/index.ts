@@ -5,6 +5,8 @@ import express from 'express';
 import { Request, Response, NextFunction, urlencoded } from 'express';
 import { AppDataSource } from './data-source';
 import { error } from 'console';
+import { AppError } from './utils/error';
+import { userRouter } from './routes';
 
 const app = express();
 const Port = (process.env.PORT as string) || 3000;
@@ -12,14 +14,6 @@ const Port = (process.env.PORT as string) || 3000;
 //Port Connection
 
 //class Error handler
-class AppError extends Error {
-  statusCode: number | undefined;
-  message: string;
-  constructor(message?: string, statusCode?: number) {
-    super(message);
-    this.statusCode = statusCode;
-  }
-}
 
 const main = async () => {
   try {
@@ -31,10 +25,11 @@ const main = async () => {
     app.use(express.urlencoded({ extended: true }));
 
     // Routes
-    app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
-      console.log('hii there 1 next');
-      return next(new AppError('hiii there', 401));
-    });
+    // app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
+    //   console.log('hii there 1 next');
+    //   return next(new AppError('hiii there', 401));
+    // });
+    app.use('/api/v1', userRouter);
 
     app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
       return res.status(500).json('hii there 2 next');
